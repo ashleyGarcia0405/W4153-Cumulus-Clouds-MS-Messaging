@@ -1,4 +1,4 @@
-package com.cumulusclouds.w4153cumuluscloudsmsmessaging;
+package com.cumulusclouds.w4153cumuluscloudsmsmessaging.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

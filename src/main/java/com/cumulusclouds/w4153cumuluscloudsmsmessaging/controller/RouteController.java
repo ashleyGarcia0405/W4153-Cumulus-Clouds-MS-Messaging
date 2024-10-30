@@ -1,7 +1,10 @@
-package com.cumulusclouds.w4153cumuluscloudsmsmessaging;
+package com.cumulusclouds.w4153cumuluscloudsmsmessaging.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.cumulusclouds.w4153cumuluscloudsmsmessaging.model.Message;
+import com.cumulusclouds.w4153cumuluscloudsmsmessaging.service.MessageService;
 
 import java.util.List;
 

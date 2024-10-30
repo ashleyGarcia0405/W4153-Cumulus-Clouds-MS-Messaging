@@ -1,7 +1,10 @@
-package com.cumulusclouds.w4153cumuluscloudsmsmessaging;
+package com.cumulusclouds.w4153cumuluscloudsmsmessaging.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.cumulusclouds.w4153cumuluscloudsmsmessaging.model.Message;
+import com.cumulusclouds.w4153cumuluscloudsmsmessaging.repository.MessageRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
