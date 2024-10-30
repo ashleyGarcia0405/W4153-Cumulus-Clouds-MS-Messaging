@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.time.Instant;
 
 @Entity
-@Table(name = "attachments")
+@Table(name = "attachment")
 public class Attachment {
 
   @Id
