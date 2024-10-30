@@ -4,55 +4,82 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import java.util.UUID;
+import java.time.Instant;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "message")
 public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long senderId;
-    private Long receiverId;
-    private String content;
-    private LocalDateTime timestamp;
 
-    public Long getId() {
-        return id;
-    }
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "message_id", updatable = false, nullable = false)
+  private UUID messageId;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @Column(name = "sender_id", nullable = false)
+  private UUID senderId;
 
-    public Long getSenderId() {
-        return senderId;
-    }
+  @Column(name = "receiver_id", nullable = false)
+  private UUID receiverId;
 
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
-    }
+  @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+  private String content;
 
-    public Long getReceiverId() {
-        return receiverId;
-    }
+  @Column(name = "timestamp", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  private Instant timestamp;
 
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
-    }
+  @Column(name = "is_read", nullable = false)
+  private boolean isRead = false;
 
-    public String getContent() {
-        return content;
-    }
+  public UUID getMessageId() {
+    return messageId;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public void setMessageId(UUID messageId) {
+    this.messageId = messageId;
+  }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+  public UUID getSenderId() {
+    return senderId;
+  }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+  public void setSenderId(UUID senderId) {
+    this.senderId = senderId;
+  }
+
+  public UUID getReceiverId() {
+    return receiverId;
+  }
+
+  public void setReceiverId(UUID receiverId) {
+    this.receiverId = receiverId;
+  }
+ 
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
+
+  public Instant getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Instant timestamp) {
+    this.timestamp = timestamp;
+  }
+
+  public boolean isRead() {
+    return isRead;
+  }
+
+  public void setRead(boolean isRead) {
+    this.isRead = isRead;
+  }
+  
 }
+
