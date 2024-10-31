@@ -101,7 +101,8 @@ public class AttachmentController {
           required = true
   )
   @GetMapping("/message/{messageId}")
-  public List<EntityModel<Attachment>> getAttachmentsByMessageId(@PathVariable UUID messageId) {
+  public List<EntityModel<Attachment>> getAttachmentsByMessageId(
+          @PathVariable UUID messageId) {
     List<Attachment> attachments = attachmentService.getAttachmentsByMessageId(messageId);
     return attachments.stream()
             .map(attachment -> {

@@ -22,7 +22,7 @@ public class Attachment {
   @Column(name = "file_type", nullable = false)
   private String fileType;
 
-  @Column(name = "uploaded_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  @Column(name = "uploaded_at", nullable = false, columnDefinition = "TIMESTAMP SET DEFAULT CURRENT_TIMESTAMP")
   private Instant uploadedAt;
 
   public UUID getAttachmentId() {
