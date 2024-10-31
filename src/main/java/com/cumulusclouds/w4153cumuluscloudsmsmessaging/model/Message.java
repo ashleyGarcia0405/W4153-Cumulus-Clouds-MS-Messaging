@@ -8,10 +8,11 @@ import jakarta.persistence.Column;
 import java.util.UUID;
 import java.time.Instant;
 import jakarta.persistence.Table;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
 @Table(name = "message")
-public class Message {
+public class Message extends RepresentationModel<Message> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

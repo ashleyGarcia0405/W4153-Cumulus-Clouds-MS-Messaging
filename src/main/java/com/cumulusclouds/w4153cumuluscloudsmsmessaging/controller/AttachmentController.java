@@ -8,10 +8,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/attachments")
@@ -41,9 +44,12 @@ public class AttachmentController {
           description = "Invalid attachment data provided"
   )
   @PostMapping("/")
-  public Attachment createAttachment(@RequestBody Attachment attachment) {
-    return attachmentService.saveAttachment(attachment);
-   }
+  public EntityModel<Attachment> createAttachment(@RequestBody Attachment attachment) {
+    Attachment savedAttachment = attachmentService.saveAttachment(attachment);
+    EntityModel<Attachment> resource = EntityModel.of(savedAttachment);
+    resource.add(linkTo(methodOn(AttachmentController.class).getAttachmentById(savedAttachment.getAttachmentId())).withSelfRel());
+    return resource;
+  }
 
   @Operation(
           summary = "Retrieve an attachment by ID",
@@ -66,8 +72,12 @@ public class AttachmentController {
           required = true
   )
   @GetMapping("/{id}")
-  public Attachment getAttachmentById(@PathVariable UUID id) {
-    return attachmentService.getAttachmentById(id);
+  public EntityModel<Attachment> getAttachmentById(@PathVariable UUID id) {
+    Attachment attachment = attachmentService.getAttachmentById(id);
+    EntityModel<Attachment> resource = EntityModel.of(attachment);
+    resource.add(linkTo(methodOn(AttachmentController.class).getAttachmentById(id)).withSelfRel());
+    resource.add(linkTo(methodOn(AttachmentController.class).getAttachmentsByMessageId(attachment.getMessageId())).withRel("attachmentsByMessage"));
+    return resource;
   }
 
   @Operation(
@@ -91,8 +101,15 @@ public class AttachmentController {
           required = true
   )
   @GetMapping("/message/{messageId}")
-  public List<Attachment> getAttachmentsByMessageId(@PathVariable UUID messageId) {
-    return attachmentService.getAttachmentsByMessageId(messageId);
+  public List<EntityModel<Attachment>> getAttachmentsByMessageId(@PathVariable UUID messageId) {
+    List<Attachment> attachments = attachmentService.getAttachmentsByMessageId(messageId);
+    return attachments.stream()
+            .map(attachment -> {
+                EntityModel<Attachment> resource = EntityModel.of(attachment);
+                resource.add(linkTo(methodOn(AttachmentController.class).getAttachmentById(attachment.getAttachmentId())).withSelfRel());
+                return resource;
+            })
+            .collect(Collectors.toList());
   }
 
   @Operation(

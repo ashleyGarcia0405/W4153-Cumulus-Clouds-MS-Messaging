@@ -8,10 +8,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -41,8 +46,13 @@ public class MessageController {
           description = "Invalid message data provided"
   )
   @PostMapping("/")
-  public Message createMessage(@RequestBody Message message) {
-    return messageService.saveMessage(message);
+  public ResponseEntity<Message> createMessage(@RequestBody Message message) {
+    Message createdMessage = messageService.saveMessage(message);
+
+    createdMessage.add(linkTo(methodOn(MessageController.class).getMessageById(createdMessage.getMessageId())).withSelfRel());
+    createdMessage.add(linkTo(methodOn(MessageController.class).deleteMessage(createdMessage.getMessageId())).withRel("delete"));
+    
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
   }
 
   @Operation(
@@ -112,8 +122,9 @@ public class MessageController {
           required = true
   )
   @DeleteMapping("/{id}")
-  public void deleteMessage(@PathVariable UUID id) {
+  public ResponseEntity<Void> deleteMessage(@PathVariable UUID id) {
     messageService.deleteMessage(id);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
   
 }

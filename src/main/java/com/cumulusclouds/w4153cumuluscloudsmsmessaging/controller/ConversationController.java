@@ -8,11 +8,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/api/conversations")
@@ -42,8 +46,10 @@ public class ConversationController {
           description = "Invalid conversation data provided"
   )
   @PostMapping("/")
-  public Conversation createConversation(@RequestBody Conversation conversation) {
-    return conversationService.saveConversation(conversation);
+  public EntityModel<Conversation> createConversation(@RequestBody Conversation conversation) {
+    Conversation savedConversation = conversationService.saveConversation(conversation);
+    Link selfLink = linkTo(methodOn(ConversationController.class).getConversationById(savedConversation.getConversationId())).withSelfRel();
+    return EntityModel.of(savedConversation, selfLink);
   }
 
   @Operation(
@@ -67,8 +73,11 @@ public class ConversationController {
           required = true
   )
   @GetMapping("/{id}")
-  public Conversation getConversationById(@PathVariable UUID id) {
-    return conversationService.getConversationById(id);
+  public EntityModel<Conversation> getConversationById(@PathVariable UUID id) {
+    Conversation conversation = conversationService.getConversationById(id);
+    Link selfLink = linkTo(methodOn(ConversationController.class).getConversationById(id)).withSelfRel();
+    Link deleteLink = linkTo(methodOn(ConversationController.class).deleteConversation(id)).withRel("delete");
+    return EntityModel.of(conversation, selfLink, deleteLink);
   }
 
   @Operation(
@@ -121,8 +130,10 @@ public class ConversationController {
           required = true
   )
   @GetMapping("/user/{userId}")
-  public List<Conversation> getConversationsByUser(@PathVariable UUID userId) {
-    return conversationService.getConversationsByUser(userId);
+  public EntityModel<List<Conversation>> getConversationsByUser(@PathVariable UUID userId) {
+    List<Conversation> conversations = conversationService.getConversationsByUser(userId);
+    Link selfLink = linkTo(methodOn(ConversationController.class).getConversationsByUser(userId)).withSelfRel();
+    return EntityModel.of(conversations, selfLink);
   }
 
   @Operation(
@@ -142,8 +153,9 @@ public class ConversationController {
           required = true
   )
   @DeleteMapping("/{id}")
-  public void deleteConversation(@PathVariable UUID id) {
+  public UUID deleteConversation(@PathVariable UUID id) {
     conversationService.deleteConversation(id);
+    return id;
   }
   
 }
